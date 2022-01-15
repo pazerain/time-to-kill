@@ -1,6 +1,9 @@
-def create_DECK():
-    SUITS = ["♠", "♡", "♣", "♢"]
-    RANKS = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
+def create_deck():
+
+    # https://python.plainenglish.io/draw-a-random-playing-card-in-python-848393d6d868
+
+    SUITS = ['♠', '♡', '♣', '♢']
+    RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
     DECK = set()
 
     for suit in SUITS:
@@ -14,7 +17,7 @@ def create_DECK():
 
 
 def ace_hearts_location(game_length):
-    # Determine where the 'A ♡' is "shuffled" to
+    # Determine where the 'A ♡' is "shuffle"' to
     import random
     match game_length:
         case '1':
@@ -56,6 +59,9 @@ def draw_cards(roll, cards_drawn, target_location, DECK):
 
 
 def sort_cards(DRAWN_CARDS):
+
+    # https://stackoverflow.com/questions/58277822/custom-sorting-a-deck-of-cards
+
     SUIT_ORDER = {
     '♢': 0,
     '♣': 1,
@@ -81,6 +87,9 @@ def sort_cards(DRAWN_CARDS):
 
 
 def sort_kept_cards(KEPT_CARDS):
+
+    # https://stackoverflow.com/questions/58277822/custom-sorting-a-deck-of-cards
+
     SUIT_ORDER = {
     '♠': 0,
     '♡': 1,
@@ -230,7 +239,7 @@ def moment(moment_num, cards_drawn, KEPT_CARDS, target_location, DECK):
     
     
 def main():
-    DECK = create_DECK()
+    DECK = create_deck()
     moment_num = 1
     cards_drawn = 0
     KEPT_CARDS = []
