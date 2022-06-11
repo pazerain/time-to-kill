@@ -236,23 +236,32 @@ def moment(moment_num, cards_drawn, KEPT_CARDS, target_location, DECK):
     return cards_drawn, KEPT_CARDS, DECK
 
 
-def main():
-    DECK = create_deck()
-    moment_num = 1
-    cards_drawn = 0
-    KEPT_CARDS = []
-
+def get_menu_selection():
     # Determine the length of game user wants
     print('\nWhat length of game do you want?')
     print('[1] Short')
     print('[2] Normal')
     print('[3] Long')
     print('[4] Random')
-    game_length = input('\nEnter the value of your selection: ')
+    print('[0] Exit Game')
+    return int(input('\nEnter the value of your selection: '))
 
-    # Make sure the input is valid
-    if int(game_length) > 4:
+
+def main():
+    DECK = create_deck()
+    moment_num = 1
+    cards_drawn = 0
+    KEPT_CARDS = []
+
+    game_length = get_menu_selection()
+
+    while game_length > 4 or game_length < 0:
         print('\nInvalid input. Please try again.\n')
+        game_length = get_menu_selection()
+
+    if game_length == 0:
+        # User chose to exit game
+        print('Goodbye!')
         return
 
     # "Shuffle" the 'A ♡' into the correct location
