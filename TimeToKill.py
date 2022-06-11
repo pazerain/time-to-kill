@@ -1,5 +1,4 @@
 def create_deck():
-
     # https://python.plainenglish.io/draw-a-random-playing-card-in-python-848393d6d868
 
     SUITS = ['♠', '♡', '♣', '♢']
@@ -9,10 +8,11 @@ def create_deck():
     for suit in SUITS:
         suit_cards = {f'{rank} {suit}' for rank in RANKS}
         DECK.update(suit_cards)
-        
+
         # Remove the 'A ♡'
+        # noinspection PyTypeChecker
         DECK.discard('A ♡')
-    
+
     return DECK
 
 
@@ -21,23 +21,23 @@ def ace_hearts_location(game_length):
     import random
     match game_length:
         case '1':
-            print ('\nPlaying a short game of Time To Kill.')
-            location = random.randint(1,13)
+            print('\nPlaying a short game of Time To Kill.')
+            location = random.randint(1, 13)
         case '2':
-            print ('\nPlaying a normal game of Time To Kill.')
-            location = random.randint(1,26)
+            print('\nPlaying a normal game of Time To Kill.')
+            location = random.randint(1, 26)
         case '3':
-            print ('\nPlaying a long game of Time To Kill.')
-            location = random.randint(27,52)
-        case '4':
-            print ('\nPlaying a random game of Time To Kill.')  
-            location = random.randint(1,52)
+            print('\nPlaying a long game of Time To Kill.')
+            location = random.randint(27, 52)
+        case _:  # default case and also ensure location is always assigned
+            print('\nPlaying a random game of Time To Kill.')
+            location = random.randint(1, 52)
     return location
-  
+
 
 def d6_roll():
     import random
-    roll = random.randint(1,6)
+    roll = random.randint(1, 6)
     return roll
 
 
@@ -54,27 +54,26 @@ def draw_cards(roll, cards_drawn, target_location, DECK):
                 DRAWN_CARDS.append(card)
         else:
             return cards_drawn, DRAWN_CARDS, DECK
-    
+
     return cards_drawn, DRAWN_CARDS, DECK
 
 
 def sort_cards(DRAWN_CARDS):
-
     # https://stackoverflow.com/questions/58277822/custom-sorting-a-deck-of-cards
 
     SUIT_ORDER = {
-    '♢': 0,
-    '♣': 1,
-    '♡': 2,
-    '♠': 3,
+        '♢': 0,
+        '♣': 1,
+        '♡': 2,
+        '♠': 3,
     }
 
-    RANK_ORDER = {str(r):r for r in range(2,11)}
+    RANK_ORDER = {str(r): r for r in range(2, 11)}
     RANK_ORDER.update(
-        J = 11,
-        Q = 12,
-        K = 13,
-        A = 14,
+        J=11,
+        Q=12,
+        K=13,
+        A=14,
     )
 
     def helper(card):
@@ -82,27 +81,26 @@ def sort_cards(DRAWN_CARDS):
         rank = RANK_ORDER.get(card[:-2], 20)
         return (rank, suit)
 
-    DRAWN_CARDS.sort(key=helper, reverse = True)
+    DRAWN_CARDS.sort(key=helper, reverse=True)
     return
 
 
 def sort_kept_cards(KEPT_CARDS):
-
     # https://stackoverflow.com/questions/58277822/custom-sorting-a-deck-of-cards
 
     SUIT_ORDER = {
-    '♠': 0,
-    '♡': 1,
-    '♣': 2,
-    '♢': 3,
+        '♠': 0,
+        '♡': 1,
+        '♣': 2,
+        '♢': 3,
     }
 
-    RANK_ORDER = {str(r):r for r in range(2,11)}
+    RANK_ORDER = {str(r): r for r in range(2, 11)}
     RANK_ORDER.update(
-        J = 11,
-        Q = 12,
-        K = 13,
-        A = 14,
+        J=11,
+        Q=12,
+        K=13,
+        A=14,
     )
 
     def helper(card):
@@ -115,7 +113,7 @@ def sort_kept_cards(KEPT_CARDS):
 
 
 def keep_card(DRAWN_CARDS, KEPT_CARDS):
-    KEEPING_CARD=[]
+    KEEPING_CARD = []
 
     # sort the drawn cards
     sort_cards(DRAWN_CARDS)
@@ -130,7 +128,7 @@ def keep_card(DRAWN_CARDS, KEPT_CARDS):
             KEEPING_CARD.append(card)
         else:
             break
-    
+
     # Remove specific card if King kept
     for card in KEEPING_CARD:
         if card[:-2] == 'K':
@@ -182,7 +180,7 @@ def find_instinct(KEPT_CARDS):
             points = 2
         else:
             points = 1
-        
+
         # give points to suit
         match card[-1:]:
             case '♠':
@@ -193,9 +191,9 @@ def find_instinct(KEPT_CARDS):
                 instincts['Paranoid'] += points
             case '♢':
                 instincts['Clear-Minded'] += points
-        
+
     # determine dominant instinct
-    max_instinct = max(instincts.items(), key=lambda x : x[1])
+    max_instinct = max(instincts.items(), key=lambda x: x[1])
     max_key = max_instinct[0]
     max_value = max_instinct[1]
     dominant_instinct = max_key
@@ -231,32 +229,41 @@ def moment(moment_num, cards_drawn, KEPT_CARDS, target_location, DECK):
     print('Cards: ')
     for card in DRAWN_CARDS:
         print(f'       {card}')
-    
+
     # Determine the new kept cards
     KEPT_CARDS = keep_card(DRAWN_CARDS, KEPT_CARDS)
-    
+
     return cards_drawn, KEPT_CARDS, DECK
-    
-    
-def main():
-    DECK = create_deck()
-    moment_num = 1
-    cards_drawn = 0
-    KEPT_CARDS = []
-    
+
+
+def get_menu_selection():
     # Determine the length of game user wants
     print('\nWhat length of game do you want?')
     print('[1] Short')
     print('[2] Normal')
     print('[3] Long')
     print('[4] Random')
-    game_length = input('\nEnter the value of your selection: ')
+    print('[0] Exit Game')
+    return int(input('\nEnter the value of your selection: '))
 
-    # Make sure the input is valid
-    if int(game_length) > 4:
+
+def main():
+    DECK = create_deck()
+    moment_num = 1
+    cards_drawn = 0
+    KEPT_CARDS = []
+
+    game_length = get_menu_selection()
+
+    while game_length > 4 or game_length < 0:
         print('\nInvalid input. Please try again.\n')
+        game_length = get_menu_selection()
+
+    if game_length == 0:
+        # User chose to exit game
+        print('Goodbye!')
         return
-    
+
     # "Shuffle" the 'A ♡' into the correct location
     target_location = ace_hearts_location(game_length)
 
@@ -283,7 +290,7 @@ def main():
         print('\nGame aborted\n')
 
     return
-    
+
 
 if __name__ == '__main__':
     main()
